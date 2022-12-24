@@ -4,7 +4,7 @@ from app.models.user import ParseUserStatuses
 
 
 class TwitterUser(BaseModel):
-    twitter_id: int
+    twitter_id: str
     name: str
     username: str
     following_count: int

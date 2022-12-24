@@ -24,7 +24,7 @@ class User(Base):
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    twitter_id = Column(Integer)
+    twitter_id = Column(String(127))
     name = Column(String(127))
     username = Column(String(15), nullable=False, index=True)
     description = Column(String)

@@ -1,15 +1,15 @@
 """add tables
 
-Revision ID: 7cc6e7935208
+Revision ID: 41850ebdfcad
 Revises:
-Create Date: 2022-12-24 10:26:48.310697+00:00
+Create Date: 2022-12-24 11:11:50.147461+00:00
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "7cc6e7935208"
+revision = "41850ebdfcad"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,7 +31,7 @@ def upgrade():
     op.create_table(
         "user",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("twitter_id", sa.Integer(), nullable=True),
+        sa.Column("twitter_id", sa.String(length=127), nullable=True),
         sa.Column("name", sa.String(length=127), nullable=True),
         sa.Column("username", sa.String(length=15), nullable=False),
         sa.Column("description", sa.String(), nullable=True),

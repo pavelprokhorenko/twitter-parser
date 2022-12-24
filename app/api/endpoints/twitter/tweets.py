@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Path, Query, status
 
 from app.parsers.twitter_parser import twitter_parser
-from app.schemas.tweet import Tweet
-from app.schemas.user import TwitterUser
+from app.schemas import Tweet
 
 router = APIRouter()
 
@@ -10,7 +9,7 @@ router = APIRouter()
 @router.get("/{twitter_id}", status_code=status.HTTP_200_OK, response_model=list[Tweet])
 async def get_last_tweets(
     twitter_id: int = Path(...), amount_tweets: int | None = Query(default=10)
-) -> TwitterUser:
+) -> list[Tweet]:
     """
     Get last tweets from Twitter user with given id.
     """
