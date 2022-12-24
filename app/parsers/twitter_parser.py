@@ -1,4 +1,5 @@
 from app.async_client import async_http_client
+from app.schemas.tweet import Tweet
 from app.schemas.user import TwitterUser
 from settings import settings
 
@@ -37,6 +38,34 @@ class TwitterParser:
             followers_count=user_data.get("public_metrics", {}).get("followers_count"),
         )
         return user
+
+    async def get_last_tweets(
+        self, twitter_id: int, amount_tweets: int = 10
+    ) -> list[Tweet]:
+        url = f"{self._base_twitter_api_url}/2/users/{twitter_id}/tweets"
+        params = {
+            "tweet.fields": "id,text,created_at,lang",
+            "max_results": amount_tweets,
+        }
+
+        if amount_tweets < 5 or amount_tweets > 100:
+            raise ValueError("Amount tweets must be between 5 and 100.")
+
+        user_tweets = await async_http_client.get(
+            url, headers=self._headers, params=params
+        )
+        tweets = []
+        for tweet in user_tweets.get("data", []):
+            tweets.append(
+                Tweet(
+                    id=tweet.get("id"),
+                    text=tweet.get("text"),
+                    created_at=tweet.get("created_at"),
+                    lang=tweet.get("lang"),
+                )
+            )
+
+        return tweets
 
 
 twitter_parser = TwitterParser()
