@@ -2,9 +2,11 @@ from asyncio import AbstractEventLoop
 from collections.abc import Mapping
 from typing import Any, Union
 
-from aiohttp import ClientResponse, ClientSession
+from aiohttp import ClientError, ClientResponse, ClientSession
 from aiohttp.typedefs import StrOrURL
 from orjson import dumps
+
+from app.utils.http_client import safe_request
 
 
 class AsyncHTTPClient:
@@ -31,6 +33,7 @@ class AsyncHTTPClient:
         """
         await self._client_session.close()
 
+    @safe_request
     async def get(
         self,
         url: StrOrURL,
@@ -38,7 +41,7 @@ class AsyncHTTPClient:
         json: Union[Mapping[str, Any], None] = None,
         headers: Union[Mapping[str, Any], None] = None,
         cookies: Union[Mapping[str, Any], None] = None,
-        **kwargs
+        **kwargs,
     ) -> Any:
         if headers is None:
             headers = {}
@@ -49,8 +52,15 @@ class AsyncHTTPClient:
             url, json=json, headers=headers, cookies=cookies, **kwargs
         ) as response:
             response: ClientResponse
+            if 400 <= response.status < 500:
+                raise ClientError(
+                    f"Request was failed with code {response.status}. "
+                    f"Detail: {await response.text()}"
+                )
+
             return await response.json()
 
+    @safe_request
     async def post(
         self,
         url: StrOrURL,
@@ -58,7 +68,7 @@ class AsyncHTTPClient:
         json: Union[Mapping[str, Any], None] = None,
         headers: Union[Mapping[str, Any], None] = None,
         cookies: Union[Mapping[str, Any], None] = None,
-        **kwargs
+        **kwargs,
     ) -> Any:
         if headers is None:
             headers = {}
@@ -69,6 +79,12 @@ class AsyncHTTPClient:
             url, json=json, headers=headers, cookies=cookies, **kwargs
         ) as response:
             response: ClientResponse
+            if 400 <= response.status < 500:
+                raise ClientError(
+                    f"Request was failed with code {response.status}. "
+                    f"Detail: {await response.text()}"
+                )
+
             return await response.json()
 
 
