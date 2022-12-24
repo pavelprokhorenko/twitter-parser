@@ -15,7 +15,7 @@ SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(
 
 engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL,
-    echo=settings.service.env.upper() == "DEV",
+    echo=settings.service.debug,
     pool_pre_ping=True,
 )
 
