@@ -1,0 +1,14 @@
+service:
+  host:
+  port:
+  workers:
+  debug:
+  origins:
+    -
+
+twitter:
+  api_key:
+  api_secret_key:
+  api_bearer_token:
+  api_access_token:
+  api_access_token_secret:
