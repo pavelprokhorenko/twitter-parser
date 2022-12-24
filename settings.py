@@ -6,6 +6,18 @@ from yaml import SafeLoader, load
 CONFIG_FILE = f"{Path(__file__).parent.absolute()}/settings.yaml"
 
 
+class Postgres(BaseSettings):
+    """
+    Settings for postgres db.
+    """
+
+    host: str
+    port: int
+    user: str
+    password: str
+    database: str
+
+
 class Service(BaseSettings):
     """
     Settings for service.
@@ -31,6 +43,7 @@ class Twitter(BaseSettings):
 
 
 class Settings(BaseSettings):
+    postgres: Postgres
     service: Service
     twitter: Twitter
 

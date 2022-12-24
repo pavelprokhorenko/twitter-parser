@@ -1,3 +1,10 @@
+postgres:
+  host:
+  port:
+  user:
+  password:
+  database:
+
 service:
   host:
   port:
