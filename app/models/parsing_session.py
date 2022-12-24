@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 from app.db.base_class import Base
 
 
-class ParseSession(Base):
+class ParsingSession(Base):
     """
     Session for parsing data from Twitter API.
     """

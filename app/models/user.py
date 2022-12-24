@@ -37,6 +37,6 @@ class User(Base):
     )
 
     session_id = Column(
-        ForeignKey("parse_session.id", ondelete="CASCADE", onupdate="CASCADE"),
+        ForeignKey("parsing_session.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
     )
