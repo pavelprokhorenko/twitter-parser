@@ -14,7 +14,11 @@ class TwitterParser:
 
     async def get_user_data_by_username(self, username: str) -> TwitterUser:
         url = f"{self._base_twitter_api_url}/2/users/by/username/{username}"
-        params = {"user.fields": "id,name,username,description,public_metrics"}
+        params = {
+            "user.fields": ",".join(
+                ["id", "name", "username", "description", "public_metrics"]
+            )
+        }
 
         user_data = await async_http_client.get(
             url, headers=self._headers, params=params
