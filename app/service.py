@@ -34,7 +34,7 @@ class Service:
         self._asgi_app = FastAPI(
             middleware=middleware,
             on_startup=[self._open_connections],
-            on_shutdown=[self._open_connections],
+            on_shutdown=[self._close_connections],
         )
         self._asgi_app.include_router(api_router)
 
