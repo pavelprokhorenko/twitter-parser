@@ -31,22 +31,39 @@ class AsyncHTTPClient:
         """
         await self._client_session.close()
 
-    async def post(
+    async def get(
         self,
         url: StrOrURL,
         *,
-        json: Mapping[str, Any],
+        json: Union[Mapping[str, Any], None] = None,
         headers: Union[Mapping[str, Any], None] = None,
         cookies: Union[Mapping[str, Any], None] = None,
         **kwargs
     ) -> Any:
-        """
-        Отправка запрос с данными на внешний сервис и получение json ответа
-        """
         if headers is None:
-            headers = dict()
+            headers = {}
         if cookies is None:
-            cookies = dict()
+            cookies = {}
+
+        async with self._client_session.get(
+            url, json=json, headers=headers, cookies=cookies, **kwargs
+        ) as response:
+            response: ClientResponse
+            return await response.json()
+
+    async def post(
+        self,
+        url: StrOrURL,
+        *,
+        json: Union[Mapping[str, Any], None] = None,
+        headers: Union[Mapping[str, Any], None] = None,
+        cookies: Union[Mapping[str, Any], None] = None,
+        **kwargs
+    ) -> Any:
+        if headers is None:
+            headers = {}
+        if cookies is None:
+            cookies = {}
 
         async with self._client_session.post(
             url, json=json, headers=headers, cookies=cookies, **kwargs
