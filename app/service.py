@@ -6,6 +6,7 @@ from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
 
+from app.api.endpoints.routers import api_router
 from settings import Settings, settings
 
 
@@ -34,6 +35,7 @@ class Service:
             on_startup=[self._open_connections],
             on_shutdown=[self._open_connections],
         )
+        self._asgi_app.include_router(api_router)
 
     def get_app(self) -> FastAPI:
         """
