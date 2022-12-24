@@ -14,7 +14,7 @@ class TwitterParser:
 
     async def get_user_data_by_username(self, username: str) -> TwitterUser:
         url = f"{self._base_twitter_api_url}/2/users/by/username/{username}"
-        params = {"user.fields": "id,name,username,description"}
+        params = {"user.fields": "id,name,username,description,public_metrics"}
 
         user_data = await async_http_client.get(
             url, headers=self._headers, params=params
@@ -29,47 +29,10 @@ class TwitterParser:
             name=user_data.get("name"),
             username=user_data.get("username"),
             description=user_data.get("description"),
-            following_count=await self._get_user_following_count(user_id),
-            followers_count=await self._get_user_followers_count(user_id),
+            following_count=user_data.get("public_metrics", {}).get("following_count"),
+            followers_count=user_data.get("public_metrics", {}).get("followers_count"),
         )
         return user
-
-    async def _get_user_following_count(self, user_id: int) -> int:
-        url = f"{self._base_twitter_api_url}/1.1/friends/ids.json"
-        params = {"user_id": user_id, "count": 5000}
-        following_count = 0
-
-        user_following_ids = await async_http_client.get(
-            url, headers=self._headers, params=params
-        )
-
-        while user_following_ids:
-            following_count += len(user_following_ids.get("ids", []))
-
-            params["cursor"] = user_following_ids.get("next_cursor")
-            user_following_ids = await async_http_client.get(
-                url, headers=self._headers, params=params
-            )
-
-        return following_count
-
-    async def _get_user_followers_count(self, user_id: int) -> int:
-        url = f"{self._base_twitter_api_url}/1.1/followers/ids.json"
-        params = {"user_id": user_id, "count": 5000}
-        following_count = 0
-
-        user_following_ids = await async_http_client.get(
-            url, headers=self._headers, params=params
-        )
-        while user_following_ids:
-            following_count += len(user_following_ids.get("ids", []))
-
-            params["cursor"] = user_following_ids.get("next_cursor")
-            user_following_ids = await async_http_client.get(
-                url, headers=self._headers, params=params
-            )
-
-        return following_count
 
 
 twitter_parser = TwitterParser()
