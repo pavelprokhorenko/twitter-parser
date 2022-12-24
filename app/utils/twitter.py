@@ -20,5 +20,8 @@ async def parse_users(db: AsyncSession, *, users: list[dict[str, Any]]) -> None:
             user_data = {}
             status = ParseUserStatuses.FAILED.name
 
-        user_in = {"parse_status": status, **user_data.dict(exclude_unset=True)}
+        if not isinstance(user_data, dict):
+            user_data = user_data.dict(exclude_unset=True)
+
+        user_in = {"parse_status": status, **user_data}
         await crud.user.update(db, pk=user["id"], obj_in=user_in)

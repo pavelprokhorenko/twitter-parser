@@ -22,12 +22,13 @@ class TwitterParser:
         }
 
         user_data = await async_http_client.get(
-            url, headers=self._headers, params=params
+            url, headers=self._headers, params=params, timeout=5
         )
+        user_data = user_data.get("data")
+
         if not user_data:
             raise ValueError(f"Invalid username {username}")
 
-        user_data = user_data.get("data")
         user_id = user_data.get("id")
         user = TwitterUser(
             twitter_id=user_id,
@@ -52,7 +53,7 @@ class TwitterParser:
             raise ValueError("Amount tweets must be between 5 and 100.")
 
         user_tweets = await async_http_client.get(
-            url, headers=self._headers, params=params
+            url, headers=self._headers, params=params, timeout=5
         )
         tweets = []
         for tweet in user_tweets.get("data", []):
