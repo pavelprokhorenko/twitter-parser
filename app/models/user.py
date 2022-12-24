@@ -1,6 +1,16 @@
-from sqlalchemy import Column, Integer, String
+from enum import Enum
+
+from sqlalchemy import Column
+from sqlalchemy import Enum as SAEnum
+from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
 
 from app.db.base_class import Base
+
+
+class ParseUserStatuses(Enum):
+    FAILED = "FAILED"
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
 
 
 class User(Base):
@@ -8,10 +18,25 @@ class User(Base):
     Parsed user from Twitter.
     """
 
+    __table_args__ = (
+        # unique usernames among parse session
+        UniqueConstraint("username", "session_id"),
+    )
+
     id = Column(Integer, primary_key=True, autoincrement=True)
-    twitter_id = Column(Integer, unique=True, nullable=False, index=True)
-    name = Column(String(127), nullable=False)
-    username = Column(String(15), unique=True, nullable=False, index=True)
+    twitter_id = Column(Integer)
+    name = Column(String(127))
+    username = Column(String(15), nullable=False, index=True)
     description = Column(String)
-    following_count = Column(Integer, server_default="0", nullable=False)
-    followers_count = Column(Integer, server_default="0", nullable=False)
+    following_count = Column(Integer)
+    followers_count = Column(Integer)
+    parse_status = Column(
+        SAEnum(ParseUserStatuses, name="parse_user_statuses"),
+        server_default=ParseUserStatuses.PENDING.name,
+        nullable=False,
+    )
+
+    session_id = Column(
+        ForeignKey("parse_session.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
