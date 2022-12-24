@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
 
 from app.api.endpoints.routers import api_router
+from app.async_client import async_http_client
 from settings import Settings, settings
 
 
@@ -74,13 +75,15 @@ class Service:
 
     async def _open_connections(self) -> None:
         """
-        Open connections to all services.
+        Open connections to all necessary services.
         """
+        await async_http_client.connect(self._loop)
 
     async def _close_connections(self) -> None:
         """
-        Close connections to all services.
+        Close connections to all necessary services.
         """
+        await async_http_client.close()
 
 
 service = Service(service_settings=settings)
